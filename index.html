@@ -196,7 +196,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-03-15 21:28:07 / 修改时间：21:28:42" itemprop="dateCreated datePublished" datetime="2024-03-15T21:28:07+08:00">2024-03-15</time>
+              <time title="创建时间：2024-03-15 21:28:07 / 修改时间：23:11:58" itemprop="dateCreated datePublished" datetime="2024-03-15T21:28:07+08:00">2024-03-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,7 +214,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>0</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -233,7 +233,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h3 id="1-信号的描述"><a href="#1-信号的描述" class="headerlink" title="1.信号的描述"></a>1.信号的描述</h3><p>公式法、图形法、表格法</p>
+<h3 id="2-信号的分类"><a href="#2-信号的分类" class="headerlink" title="2.信号的分类"></a>2.信号的分类</h3><p>$$<br>信号分类<br>\begin{cases}<br>    是否确定<br>    \begin{cases}<br>        确定性信号:任意时间点上取值确定<br>        \\<br>        随机信号:取值不确定，但有一个范围<br>        \\<br>        伪随机信号:貌似随机而遵循严格规律产生的信号<br>    \end{cases}<br>    \\<br>    是否连续<br>    \begin{cases}<br>        连续时间信号:任意时刻信号都存在<br>        \\<br>        离散时间信号:时间轴上的取值离散<br>    \end{cases}<br>    \\<br>    是否周期<br>    \begin{cases}<br>        周期信号:以固定的时间间隔完全重复、无始无终<br>        \\<br>        非周期信号:时间轴上的取值离散<br>    \end{cases}<br>    \\<br>    特殊性质<br>    \begin{cases}<br>        能量信号:W&#x3D;\lim_{T_{1}\rightarrow\infty}\int_{-\frac{T_1}{2}}^{\frac{T_1}{2}}f^{2}(t)dt,0&lt;W&lt;\infty<br>        \\<br>        功率信号:P&#x3D;\lim_{t\to\infty}\frac{1}{T_{1}}\int_{-\frac{T_1}{2}}^{\frac{T_!}{2}}f^{2}(t)dt,0&lt;P&lt;\infty<br>    \end{cases}<br>\end{cases}<br>$$</p>
+<h3 id="3-信号的运算"><a href="#3-信号的运算" class="headerlink" title="3.信号的运算"></a>3.信号的运算</h3><p>$$<br>信号运算<br>\begin{cases}<br>    幅度运算<br>    \begin{cases}<br>        倍乘运算:f(t)\rightarrow Kf(t),其中K为常数<br>        \\<br>        微、积分运算<br>        \begin{cases}<br>            微分运算(求导):f’(t) &#x3D; \frac{df(t)}{dt},不改变周期性<br>            \\<br>            积分运算(原函数):f^{-1}(t) &#x3D; \int_{-{\infty}}^{t}f(τ)dτ<br>        \end{cases}<br>        \\<br>        四则运算:加减乘除<br>    \end{cases}<br>    \\<br>    时间运算<br>    \begin{cases}<br>        反褶运算:f(t)\rightarrow f(-t),左右互换<br>        \\<br>        时移运算:f(t)\rightarrow f(t+t_0),左加右减<br>        \\<br>        压扩运算:f(t)\rightarrow f(at)<br>        \begin{cases}<br>            a&gt;1:压缩a倍<br>            \\<br>            1&gt;a&gt;0:扩展a倍<br>        \end{cases}<br>    \end{cases}<br>\end{cases}<br>$$</p>
+<h3 id="4-基本信号"><a href="#4-基本信号" class="headerlink" title="4.基本信号"></a>4.基本信号</h3><p><strong>指数信号</strong>:$f(t)&#x3D;Ke^{αt}$,α为衰减系数</p>
+<p><strong>单边负指数信号</strong><br>$$<br>f(t)&#x3D;<br>\begin{cases}<br>    Ke^{-αt},t\geq0<br>    \\<br>    0,t&lt;0<br>\end{cases}<br>$$</p>
+
       
     </div>
 
@@ -277,7 +282,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-03-15 18:08:54 / 修改时间：18:45:35" itemprop="dateCreated datePublished" datetime="2024-03-15T18:08:54+08:00">2024-03-15</time>
+              <time title="创建时间：2024-03-15 18:08:54 / 修改时间：21:30:04" itemprop="dateCreated datePublished" datetime="2024-03-15T18:08:54+08:00">2024-03-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -325,7 +330,6 @@
 
 <h4 id="2-寄存器型"><a href="#2-寄存器型" class="headerlink" title="(2)寄存器型"></a>(2)寄存器型</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//寄存器型</span></span><br><span class="line">    <span class="comment">//无符号整数变量，可以选择不同的位宽（标量或矢量）</span></span><br><span class="line">    <span class="keyword">reg</span> reg1;<span class="comment">//默认1bit寄存器</span></span><br><span class="line">	<span class="keyword">reg</span> [<span class="number">7</span>:<span class="number">0</span>]reg2，reg3;<span class="comment">//两个8位寄存器</span></span><br><span class="line">	<span class="keyword">reg</span> [<span class="number">7</span>:<span class="number">0</span>]reg_array[<span class="number">4</span>:<span class="number">0</span>]<span class="comment">//深度为5的8位寄存器</span></span><br><span class="line">    <span class="comment">//无符号整数变量，64位宽（Verilog-XL仿真工具用）</span></span><br><span class="line">    <span class="keyword">time</span> time1;</span><br><span class="line">    <span class="comment">//有符号整数变量，32位宽，2的补码的算术运算。</span></span><br><span class="line">    <span class="keyword">integer</span> integer1;</span><br><span class="line">    <span class="comment">//双精度有符号的浮点数，用法与integer相同。</span></span><br><span class="line">    <span class="keyword">real</span> real1;</span><br><span class="line">    <span class="comment">//与real内容一致，可用作实数仿真时间的保存与处理</span></span><br><span class="line">    <span class="keyword">realtime</span> realtime1;</span><br></pre></td></tr></table></figure>
 
-<p>a</p>
 <h3 id="3-操作符"><a href="#3-操作符" class="headerlink" title="3.操作符"></a>3.操作符</h3><h4 id="1-单目操作"><a href="#1-单目操作" class="headerlink" title="(1)单目操作"></a>(1)单目操作</h4><p>单目操作符对数字的二进制形式进行逐位操作得到单比特结果</p>
 <p><img src="/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/image-20240315160838546.png" alt="image-20240315160838546"></p>
 <h4 id="2-算术操作"><a href="#2-算术操作" class="headerlink" title="(2)算术操作"></a>(2)算术操作</h4><ol>
@@ -720,12 +724,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">4k</span>
+    <span title="站点总字数">5k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3 分钟</span>
+    <span title="站点阅读时长">5 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
