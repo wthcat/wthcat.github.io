@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="硬件描述语言（Hardware Description Languages，HDL） 基本设计单元：模块  1.数值表示1234567891011&#x2F;&#x2F;数值信号    0;&#x2F;&#x2F;低电平    1;&#x2F;&#x2F;高电平    x;&#x2F;&#x2F;未定电平    z;&#x2F;&#x2F;高阻抗&#x2F;&#x2F;数值表示&#x2F;&#x2F;位宽&amp;#x27;进制数字(未指定位宽默认系统位宽(32bit,64bit),未指定进制默认十进制)    8&amp;#x27;b1100101">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FPGA-verilog语法">
+<meta property="og:url" content="http://example.com/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="吾猫的猫窝">
+<meta property="og:description" content="硬件描述语言（Hardware Description Languages，HDL） 基本设计单元：模块  1.数值表示1234567891011&#x2F;&#x2F;数值信号    0;&#x2F;&#x2F;低电平    1;&#x2F;&#x2F;高电平    x;&#x2F;&#x2F;未定电平    z;&#x2F;&#x2F;高阻抗&#x2F;&#x2F;数值表示&#x2F;&#x2F;位宽&amp;#x27;进制数字(未指定位宽默认系统位宽(32bit,64bit),未指定进制默认十进制)    8&amp;#x27;b1100101">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/image-20240314204738613.png">
+<meta property="og:image" content="http://example.com/image-20240315160838546.png">
+<meta property="og:image" content="http://example.com/image-20240315161335540.png">
+<meta property="og:image" content="http://example.com/image-20240315161750991.png">
+<meta property="og:image" content="http://example.com/image-20240315161633471.png">
+<meta property="article:published_time" content="2024-03-15T10:08:54.000Z">
+<meta property="article:modified_time" content="2024-03-15T10:08:54.087Z">
+<meta property="article:author" content="wykcat">
+<meta property="article:tag" content="FPGA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/image-20240314204738613.png">
+
+<link rel="canonical" href="http://example.com/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>FPGA-verilog语法 | 吾猫的猫窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">吾猫的猫窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-update">
+
+    <a href="/update/notes.html" rel="section"><i class="fa fa-calendar fa-fw"></i>更新日志</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wykcat">
+      <meta itemprop="description" content="摆烂是种特别的选择">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="吾猫的猫窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FPGA-verilog语法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-03-15 18:08:54" itemprop="dateCreated datePublished" datetime="2024-03-15T18:08:54+08:00">2024-03-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>硬件描述语言（Hardware Description Languages，HDL）</p>
+<p>基本设计单元：模块</p>
+<p><img src="/2024/03/15/FPGA-verilog%E8%AF%AD%E6%B3%95/image-20240314204738613.png" alt="image-20240314204738613"></p>
+<h3 id="1-数值表示"><a href="#1-数值表示" class="headerlink" title="1.数值表示"></a>1.数值表示</h3><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数值信号</span></span><br><span class="line">    <span class="number">0</span>;<span class="comment">//低电平</span></span><br><span class="line">    <span class="number">1</span>;<span class="comment">//高电平</span></span><br><span class="line">    x;<span class="comment">//未定电平</span></span><br><span class="line">    z;<span class="comment">//高阻抗</span></span><br><span class="line"><span class="comment">//数值表示</span></span><br><span class="line"><span class="comment">//位宽&#x27;进制数字(未指定位宽默认系统位宽(32bit,64bit),未指定进制默认十进制)</span></span><br><span class="line">    <span class="number">8&#x27;b11001010</span>; <span class="comment">//8bit二进制</span></span><br><span class="line">    <span class="number">5&#x27;d23</span>;		<span class="comment">//5bit十进制</span></span><br><span class="line">    <span class="number">&#x27;o7460</span>;		<span class="comment">//默认bit八进制</span></span><br><span class="line">    <span class="number">16&#x27;hf68a</span>;	<span class="comment">//16bit16进制</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-数据-变量-类型"><a href="#2-数据-变量-类型" class="headerlink" title="2.数据(变量)类型"></a>2.数据(变量)类型</h3><h4 id="1-线网型"><a href="#1-线网型" class="headerlink" title="(1)线网型"></a>(1)线网型</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//注：矢量表示即[range]默认[MSB:LSB]即[高位:低位]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//线网型</span></span><br><span class="line">    <span class="keyword">wire</span> wire1;<span class="comment">//总线型(默认线网类型)，默认1bit</span></span><br><span class="line">    <span class="keyword">wire</span> [<span class="number">7</span>:<span class="number">0</span>]wire2;<span class="comment">//8未矢量线网变量</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-寄存器型"><a href="#2-寄存器型" class="headerlink" title="(2)寄存器型"></a>(2)寄存器型</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//寄存器型</span></span><br><span class="line">    <span class="comment">//无符号整数变量，可以选择不同的位宽（标量或矢量）</span></span><br><span class="line">    <span class="keyword">reg</span> reg1;<span class="comment">//默认1bit寄存器</span></span><br><span class="line">	<span class="keyword">reg</span> [<span class="number">7</span>:<span class="number">0</span>]reg2，reg3;<span class="comment">//两个8位寄存器</span></span><br><span class="line">	<span class="keyword">reg</span> [<span class="number">7</span>:<span class="number">0</span>]reg_array[<span class="number">4</span>:<span class="number">0</span>]<span class="comment">//深度为5的8位寄存器</span></span><br><span class="line">    <span class="comment">//无符号整数变量，64位宽（Verilog-XL仿真工具用）</span></span><br><span class="line">    <span class="keyword">time</span> time1;</span><br><span class="line">    <span class="comment">//有符号整数变量，32位宽，2的补码的算术运算。</span></span><br><span class="line">    <span class="keyword">integer</span> integer1;</span><br><span class="line">    <span class="comment">//双精度有符号的浮点数，用法与integer相同。</span></span><br><span class="line">    <span class="keyword">real</span> real1;</span><br><span class="line">    <span class="comment">//与real内容一致，可用作实数仿真时间的保存与处理</span></span><br><span class="line">    <span class="keyword">realtime</span> realtime1;</span><br></pre></td></tr></table></figure>
+
+<p>a</p>
+<h3 id="3-操作符"><a href="#3-操作符" class="headerlink" title="3.操作符"></a>3.操作符</h3><h4 id="1-单目操作"><a href="#1-单目操作" class="headerlink" title="(1)单目操作"></a>(1)单目操作</h4><p>单目操作符对数字的二进制形式进行逐位操作得到单比特结果</p>
+<p><img src="/image-20240315160838546.png" alt="image-20240315160838546"></p>
+<h4 id="2-算术操作"><a href="#2-算术操作" class="headerlink" title="(2)算术操作"></a>(2)算术操作</h4><ol>
+<li>将负数赋值给 reg 或其他无符号变量使用二进制补码；</li>
+<li>如果操作数的某一位是x或z ，则结果为x；</li>
+<li>在整数除法中，余数舍弃；</li>
+<li>模运算中使用第一个操作数的符号。</li>
+</ol>
+<h4 id="3-逻辑操作"><a href="#3-逻辑操作" class="headerlink" title="(3)逻辑操作"></a>(3)逻辑操作</h4><ul>
+<li>逻辑与&amp;&amp;</li>
+<li>逻辑或||</li>
+<li>逻辑非！</li>
+</ul>
+<p>其得到的结果为逻辑数值0，1，x。分别表示假，真，未定。对于非零操作数，等同于逻辑真，为零的操作数，等同于逻辑假。操作数中任意一位为x，z，其等同于逻辑不确定x。</p>
+<p><img src="/image-20240315161335540.png" alt="image-20240315161335540"></p>
+<h4 id="4-关系操作"><a href="#4-关系操作" class="headerlink" title="(4)关系操作"></a>(4)关系操作</h4><p><img src="/image-20240315161750991.png" alt="image-20240315161750991"></p>
+<h4 id="5-等价操作"><a href="#5-等价操作" class="headerlink" title="(5)等价操作"></a>(5)等价操作</h4><p>$$<br>等价操作符<br>\begin{cases}<br>逻辑等:遇到x和z，结果出现x<br>    \begin{cases}<br>    逻辑等于:a&#x3D;&#x3D;b<br>    \\<br>    逻辑不等于:a!&#x3D;b<br>    \end{cases}<br>\\<br>全等:x，z进行比较<br>    \begin{cases}<br>    全等:a&#x3D;&#x3D;&#x3D;b<br>    \\<br>    不全等:a!&#x3D;&#x3D;b<br>    \end{cases}<br>\end{cases}<br>$$</p>
+<h4 id="6-移位操作"><a href="#6-移位操作" class="headerlink" title="(6)移位操作"></a>(6)移位操作</h4><p>$$<br>移位操作符<br>\begin{cases}<br>逻辑移位:空位均补0<br>    \begin{cases}<br>    逻辑左移:&lt;&lt;<br>    \\<br>    逻辑右移:&gt;&gt;<br>    \end{cases}<br>\\<br>算数移位:正数补0，负数补1<br>    \begin{cases}<br>    算数左移:&lt;&lt;&lt;<br>    \\<br>    算数右移:&gt;&gt;&gt;<br>    \end{cases}<br>\end{cases}<br>$$</p>
+<h4 id="7-条件操作"><a href="#7-条件操作" class="headerlink" title="(7)条件操作"></a>(7)条件操作</h4><p>&lt; condition &gt;?&lt; true &gt;:&lt; false &gt;;</p>
+<h4 id="8-拼接操作"><a href="#8-拼接操作" class="headerlink" title="(8)拼接操作"></a>(8)拼接操作</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">reg</span> a,b;</span><br><span class="line"><span class="keyword">reg</span> [<span class="number">6</span>:<span class="number">0</span>]out1,out2;</span><br><span class="line">a = <span class="number">1</span>;</span><br><span class="line">b = <span class="number">0</span>;</span><br><span class="line"><span class="comment">//拼接操作符&#123;&#125;</span></span><br><span class="line">out1 = &#123;b,&#123;<span class="number">3</span>&#123;a,b&#125;&#125;&#125;;<span class="comment">//0101010</span></span><br><span class="line">out2 = &#123;b,a,b,a,b,a,b&#125;;<span class="comment">//0101010</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="注：操作符优先级"><a href="#注：操作符优先级" class="headerlink" title="注：操作符优先级"></a>注：操作符优先级</h4><p><img src="/image-20240315161633471.png" alt="image-20240315161633471"></p>
+<h3 id="4-赋值方式"><a href="#4-赋值方式" class="headerlink" title="4.赋值方式"></a>4.赋值方式</h3><h4 id="1-连续赋值"><a href="#1-连续赋值" class="headerlink" title="(1)连续赋值"></a>(1)连续赋值</h4><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//显式连续赋值：</span></span><br><span class="line">net_type [size] net_name;</span><br><span class="line"><span class="keyword">assign</span> (drive strength) <span class="variable">#(delay)</span> net_name = expression; </span><br><span class="line"><span class="comment">//其中(驱动强度) #[延迟] 赋值目标 = 赋值表达式;</span></span><br><span class="line"><span class="comment">//隐式连续赋值：</span></span><br><span class="line">net_type (drive strength) [size] <span class="variable">#(delay)</span> net_name = expression;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>连续赋值通过关键字”assign”声明，其中，net_name必须是一个标量或线网型向量，<strong>不可为寄存器型</strong>。</li>
+<li>assign赋值可以视为电路中左侧赋值目标与右侧赋值表达式直接相连，左侧赋值目标<strong>实时</strong>随右侧赋值表达式变化而变化(即连续赋值语句总处于激活状态)。故一个被连续赋值后的赋值目标<strong>不可被再次连续赋值</strong>。(如果同一赋值目标被两次连续赋值，可以认为两个赋值表达式在电路中直接相连，可能会引发<strong>无法预料的错误</strong>)</li>
+</ul>
+<h4 id="2-过程赋值"><a href="#2-过程赋值" class="headerlink" title="(2)过程赋值"></a>(2)过程赋值</h4><ul>
+<li><p>过程赋值语句的左值可以是以下类型之一：</p>
+<ul>
+<li>​	reg、整形数、实型数、时间寄存器变量或存储器单元</li>
+<li>上述各种类型的位选（例如：addr[3]）</li>
+<li>上述各种类型的域选（例如：addr[31:16]）</li>
+<li>上面三种类型的拼接</li>
+</ul>
+</li>
+<li><p>过程赋值语句只能在initial或always语句内进行赋值，只能对变量数据类型赋值，同时initial和always中只能使用过程赋值语句。</p>
+</li>
+<li><p><strong>阻塞赋值  &#x3D;</strong></p>
+</li>
+</ul>
+<p>阻塞赋值语句顺序执行，变量赋值在语句执行后实现改变，语句执行一次后不会持续执行，直到下一次进行改变。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//begin...end为一个块语句</span></span><br><span class="line"><span class="comment">//阻塞赋值</span></span><br><span class="line"><span class="keyword">reg</span> [<span class="number">3</span>:<span class="number">0</span>]a,b,c;</span><br><span class="line"></span><br><span class="line"><span class="keyword">initial</span> <span class="keyword">begin</span></span><br><span class="line">    a = <span class="number">4&#x27;d1</span>;</span><br><span class="line">    b = <span class="number">4&#x27;d2</span>;</span><br><span class="line">    c = <span class="number">4&#x27;d4</span>;</span><br><span class="line">    <span class="comment">//阻塞赋值语句</span></span><br><span class="line">    b = a;<span class="comment">//4&#x27;d1</span></span><br><span class="line">    c = b;<span class="comment">//4&#x27;d1</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>非阻塞赋值 &lt;&#x3D;</strong></li>
+</ul>
+<p>同一块语句中，非阻塞赋值语句在块结束时并行执行，同时进行赋值。</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//非阻塞赋值</span></span><br><span class="line"><span class="keyword">reg</span> [<span class="number">3</span>:<span class="number">0</span>]a,b,c;</span><br><span class="line"></span><br><span class="line"><span class="keyword">initial</span> <span class="keyword">begin</span></span><br><span class="line">    a = <span class="number">4&#x27;d1</span>;</span><br><span class="line">    b = <span class="number">4&#x27;d2</span>;</span><br><span class="line">    c = <span class="number">4&#x27;d4</span>;</span><br><span class="line">    <span class="comment">//非阻塞赋值语句</span></span><br><span class="line">    b &lt;= a;<span class="comment">//4&#x27;d1</span></span><br><span class="line">    c &lt;= b;<span class="comment">//4&#x27;d2</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>所以非阻塞赋值可以实现如下操作：</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">always</span> @(<span class="keyword">posedge</span> clk) <span class="keyword">begin</span></span><br><span class="line">    a &lt;= b ;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">always</span> @(<span class="keyword">posedge</span> clk) <span class="keyword">begin</span></span><br><span class="line">    b &lt;= a;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>2 个 always 块中语句并行执行，赋值操作右端操作数使用的是上一个时钟周期的旧值，达到交换寄存器值的目的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/FPGA/" rel="tag"># FPGA</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/13/%E7%94%B5%E5%AD%90%E7%94%B5%E8%B7%AF%E7%AC%94%E8%AE%B0-%E7%AC%AC%E4%B8%80%E7%AB%A0/" rel="prev" title="电子电路笔记-第一章">
+      <i class="fa fa-chevron-left"></i> 电子电路笔记-第一章
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%95%B0%E5%80%BC%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">1.数值表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE-%E5%8F%98%E9%87%8F-%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">2.数据(变量)类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%BA%BF%E7%BD%91%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">(1)线网型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%AF%84%E5%AD%98%E5%99%A8%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">(2)寄存器型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">3.操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%8D%95%E7%9B%AE%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">(1)单目操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%AE%97%E6%9C%AF%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">(2)算术操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%80%BB%E8%BE%91%E6%93%8D%E4%BD%9C"><span class="nav-number">3.3.</span> <span class="nav-text">(3)逻辑操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%85%B3%E7%B3%BB%E6%93%8D%E4%BD%9C"><span class="nav-number">3.4.</span> <span class="nav-text">(4)关系操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E7%AD%89%E4%BB%B7%E6%93%8D%E4%BD%9C"><span class="nav-number">3.5.</span> <span class="nav-text">(5)等价操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E7%A7%BB%E4%BD%8D%E6%93%8D%E4%BD%9C"><span class="nav-number">3.6.</span> <span class="nav-text">(6)移位操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E6%9D%A1%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">3.7.</span> <span class="nav-text">(7)条件操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-%E6%8B%BC%E6%8E%A5%E6%93%8D%E4%BD%9C"><span class="nav-number">3.8.</span> <span class="nav-text">(8)拼接操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%EF%BC%9A%E6%93%8D%E4%BD%9C%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-number">3.9.</span> <span class="nav-text">注：操作符优先级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%B5%8B%E5%80%BC%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">4.赋值方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E8%BF%9E%E7%BB%AD%E8%B5%8B%E5%80%BC"><span class="nav-number">4.1.</span> <span class="nav-text">(1)连续赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%BF%87%E7%A8%8B%E8%B5%8B%E5%80%BC"><span class="nav-number">4.2.</span> <span class="nav-text">(2)过程赋值</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wykcat</p>
+  <div class="site-description" itemprop="description">摆烂是种特别的选择</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; Wed Mar 06 2024 08:00:00 GMT+0800 (中国标准时间) – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wykcat</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">4k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
